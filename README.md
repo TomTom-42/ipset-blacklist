@@ -6,21 +6,22 @@ The ipset command doesn't work under OpenVZ. It works fine on dedicated and full
 
 ## What's new
 
-- 10/17/2018: Added support for CIDR aggregation if iprange command is available
-- 10/17/2018: Merged Shellcheck PR from [@extremeshok](https://github.com/extremeshok)
-- 05/10/2018: Added regex filter improvements from [@sbujam](https://github.com/sbujam)
-- 08/15/2017: Filtering default gateway and multicast ranges
-- 01/20/2017: Ignoring "Service unavailable" HTTP status code, removed IGNORE_CURL_ERRORS 
-- 11/04/2016: Documentation added to show how to prevent fail2ban from inserting its rules above the ipset-blacklist when restarting the fail2ban service
-- 11/11/2015: Merged all suggestions from [@drzraf](https://github.com/drzraf)
-- 10/24/2015: Outsourced the entire configuration in it's own configuration file. Makes updating the shell script way easier!
-- 10/22/2015: Changed the documentation, the script should be put in /usr/local/sbin not /usr/local/bin
+- 2025-04-27: Added support for IPv6 addresses range (forked from [@trick77](https://github.com/trick77))
+- 2018-10-17: Added support for CIDR aggregation if iprange command is available
+- 2018-10-17: Merged Shellcheck PR from [@extremeshok](https://github.com/extremeshok)
+- 2018-05-10: Added regex filter improvements from [@sbujam](https://github.com/sbujam)
+- 2017-08-15: Filtering default gateway and multicast ranges
+- 2017-01-20: Ignoring "Service unavailable" HTTP status code, removed IGNORE_CURL_ERRORS 
+- 2016-11-04: Documentation added to show how to prevent fail2ban from inserting its rules above the ipset-blacklist when restarting the fail2ban service
+- 2015-11-11: Merged all suggestions from [@drzraf](https://github.com/drzraf)
+- 2015-10-24: Outsourced the entire configuration in it's own configuration file. Makes updating the shell script way easier!
+- 2015-10-22: Changed the documentation, the script should be put in /usr/local/sbin not /usr/local/bin
 
 ## Quick start for Debian/Ubuntu based installations
 
-1. `wget -O /usr/local/sbin/update-blacklist.sh https://raw.githubusercontent.com/trick77/ipset-blacklist/master/update-blacklist.sh`
+1. `wget -O /usr/local/sbin/update-blacklist.sh https://raw.githubusercontent.com/TomTom-42/ipset-blacklist/master/update-blacklist.sh`
 2. `chmod +x /usr/local/sbin/update-blacklist.sh`
-3. `mkdir -p /etc/ipset-blacklist ; wget -O /etc/ipset-blacklist/ipset-blacklist.conf https://raw.githubusercontent.com/trick77/ipset-blacklist/master/ipset-blacklist.conf`
+3. `mkdir -p /etc/ipset-blacklist ; wget -O /etc/ipset-blacklist/ipset-blacklist.conf https://raw.githubusercontent.com/TomTom-42/ipset-blacklist/master/ipset-blacklist.conf`
 4. Modify `ipset-blacklist.conf` according to your needs. Per default, the blacklisted IP addresses will be saved to `/etc/ipset-blacklist/ip-blacklist.restore`
 5. `apt-get install ipset`
 6. Create the ipset blacklist and insert it into your iptables input filter (see below). After proper testing, make sure to persist it in your firewall script or similar or the rules will be lost after the next reboot.
@@ -97,18 +98,28 @@ If you for some reason want to ban all IP addresses from a certain country, have
 
 ## Troubleshooting
 
-### Set blacklist-tmp is full, maxelem 65536 reached
+### Set blacklist-tmp is full, maxelem 131072 reached
 
-Increase the ipset list capacity. For instance, if you want to store up to 80,000 entries, add these lines to your ipset-blacklist.conf:  
+Increase the ipset list capacity. For instance, if you want to store up to 231,072 entries, add these lines to your ipset-blacklist.conf:  
 
 ```conf
-MAXELEM=80000
+MAXELEM=231072
 ```
 
-### ipset v6.20.1: Error in line 2: Set cannot be created: set with the same name already exists
+### ipset vX.XX: Error in line 2: Set cannot be created: set with the same name already exists
 
-If this happens after changing the `MAXELEM` parameter: ipset seems to be unable to recreate an exising list with a different size. You will have to solve this manually by deleting and inserting the blacklist in ipset and iptables. A reboot will help as well and may be easier. You may want to remove `/etc/ipset-blacklist/ip-blacklist.restore` too because it may still contain the old MAXELEM size.
+If this happens after changing the `MAXELEM` parameter: ipset seems to be unable to recreate an exising list with a different size. \
+You will have to solve this manually by deleting and inserting the blacklist in ipset and iptables.
+```sh
+iptables -D INPUT -m set --match-set blacklist src -j DROP
+ipset destroy blacklist
 
-### ipset v6.12: No command specified: unknown argument -file
+ip6tables -D INPUT -m set --match-set blacklist6 src -j DROP
+ipset destroy blacklist6
+```
+
+A reboot will help as well and may be easier. You may want to remove `/etc/ipset-blacklist/ip-blacklist.restore` too because it may still contain the old MAXELEM size.
+
+### ipset vX.XX: No command specified: unknown argument -file
 
 You're using an outdated version of ipset which is not supported.
