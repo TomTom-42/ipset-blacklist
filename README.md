@@ -6,7 +6,7 @@ The ipset command doesn't work under OpenVZ. It works fine on dedicated and full
 
 ## What's new
 
-- 2025-04-27: Added support for IPv6 addresses range (forked from [@trick77](https://github.com/trick77))
+- 2025-04-27: Added support for IPv6 address range (forked from [@trick77](https://github.com/trick77))
 - 2018-10-17: Added support for CIDR aggregation if iprange command is available
 - 2018-10-17: Merged Shellcheck PR from [@extremeshok](https://github.com/extremeshok)
 - 2018-05-10: Added regex filter improvements from [@sbujam](https://github.com/sbujam)
