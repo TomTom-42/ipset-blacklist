@@ -101,10 +101,10 @@ do
   if (( HTTP_RC == 200 || HTTP_RC == 302 || HTTP_RC == 0 )); then # "0" because file:/// returns 000
     # Extract IPv4 addresses
     command grep -Po '^(?:\d{1,3}\.){3}\d{1,3}(?:/\d{1,2})?' "$IP_TMP" | sed -r 's/^0*([0-9]+)\.0*([0-9]+)\.0*([0-9]+)\.0*([0-9]+)$/\1.\2.\3.\4/' >> "$IP_BLACKLIST_TMP"
-    
+
     # Extract IPv6 addresses - Ensure they contain double colon (::) which is required in IPv6
     grep -o -E '([0-9a-fA-F]{1,4}:){1,7}[0-9a-fA-F]{0,4}::[0-9a-fA-F:]{0,32}(/[0-9]{1,3})?|::[0-9a-fA-F:]{0,32}(/[0-9]{1,3})?' "$IP_TMP" >> "$IP6_BLACKLIST_TMP"
-    
+
     [[ ${VERBOSE:-yes} == yes ]] && echo -n "."
   elif (( HTTP_RC == 503 )); then
     echo -e "\\nUnavailable (${HTTP_RC}): $i"

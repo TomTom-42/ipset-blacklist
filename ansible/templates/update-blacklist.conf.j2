@@ -1,15 +1,23 @@
 IPSET_BLACKLIST_NAME={{ ipsets_blacklist_name }}
 IPSET_TMP_BLACKLIST_NAME={{ ipsets_blacklist_name }}-tmp
 
+IPSET6_BLACKLIST_NAME={{ ipsets_blacklist6_name }}
+IPSET6_TMP_BLACKLIST_NAME={{ ipsets_blacklist6_name }}_tmp
+
 IP_BLACKLIST_RESTORE="{{ ipsets_confdir }}/ip-blacklist.restore"
 IP_BLACKLIST="{{ ipsets_confdir }}/ip-blacklist.list"
 
+IP6_BLACKLIST="{{ ipsets_confdir }}/ip6-blacklist.list"
+IP6_BLACKLIST_RESTORE="{{ ipsets_confdir }}/ip6-blacklist.restore"
+
 VERBOSE={{ verbose }}  # probably set to "no" for cron jobs, default to yes
 FORCE={{ force }} # will create the ipset-iptable binding if it does not already exist
-let IPTABLES_IPSET_RULE_NUMBER=1 # if FORCE is yes, the number at which place insert the ipset-match rule (default to 1)
+OPTIMIZE_CIDR={{ optimize_cidr }}
+HASHSIZE={{ hashsize }}
+MAXELEM={{ maxelements }}
+IPTABLES_IPSET_RULE_NUMBER=1 # if FORCE is yes, the number at which place insert the ipset-match rule (default to 1)
 
 # Sample (!) list of URLs for IP blacklists. Currently, only IPv4 is supported in this script, everything else will be filtered.
 BLACKLISTS=(
     "{{ blacklists|join("\"\n    \"") }}"
 )
-MAXELEM={{ maxelements }}

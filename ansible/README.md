@@ -1,8 +1,9 @@
 # Deploy ipset blocklist
 
-Edit hosts file.
-Edit vars in deploy.yaml
+1. Edit hosts file.
+2. Edit vars in deploy.yaml
 
 Then run  
-
-    ansible-playbook -i hosts deploy.yaml --limit server1
+```sh
+ansible-playbook -i hosts deploy.yaml --limit server1
+```
